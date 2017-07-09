@@ -1,0 +1,33 @@
+name:                cliDraw
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/eHammarstrom/cliDraw#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Emil Hammarström
+maintainer:          emil.a.hammarstrom@gmail.com
+copyright:           MIT
+category:            Web
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Helpers
+  build-depends:       base >= 4.7 && < 5
+                     , terminal-size >= 0.3.2.1
+  default-language:    Haskell2010
+
+executable cliDraw-exe
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , cliDraw
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/eHammarstrom/cliDraw
