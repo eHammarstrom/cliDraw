@@ -13,12 +13,14 @@ data DrawData = DrawData {
 
 main :: IO ()
 main = do
-  let start = (0,0)
-  setColor 37 40
-  clear
-  move start
+  startPos <- getTermCenter
+  let color = (37, 40)
 
-  mainLoop DrawData { pos = start, ps = [], color = (37,40) }
+  setColor color
+  clear
+  move startPos
+
+  mainLoop DrawData { pos = startPos, ps = [], color = color }
 
 mainLoop :: DrawData -> IO ()
 mainLoop dd = do

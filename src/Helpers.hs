@@ -8,12 +8,13 @@ module Helpers(
   moveLeft,
   moveRight,
   setColor,
-  clear
+  clear,
+  getTermCenter
   ) where
 
 import Data.Char
 import Data.List
--- import System.Console.Terminal.Size
+import System.Console.Terminal.Size
 
 type Point = (Int, Int) -- x  y
 type Color = (Int, Int) -- fg bg
@@ -53,11 +54,20 @@ moveRight (x, y) = do
   putStr (constructEscape [1] "C")
   return (x+1, y)
 
-setColor :: Int -> Int -> IO ()
-setColor fg bg = putStr (constructEscape (fg : [bg]) "m")
+setColor :: Color -> IO ()
+setColor (fg, bg) = putStr (constructEscape (fg : [bg]) "m")
 
 clear :: IO ()
 clear = putStr (constructEscape [2] "J")
+
+getTermCenter :: IO Point
+getTermCenter = do
+  s <- size
+  case s of
+       Just (Window h w) -> return (w `div` 2, h `div` 2)
+       _                 -> return (0, 0)
+
+{- private -}
 
 constructEscape :: [Int] -> String -> String
 constructEscape args code = "\ESC[" ++ intercalate ";" (map show args) ++ code
