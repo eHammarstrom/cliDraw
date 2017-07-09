@@ -5,6 +5,12 @@ import Data.List
 import Data.Char
 import System.IO
 
+data DrawData = DrawData {
+  pos   :: Point,
+  ps    :: [Point],
+  color :: Color
+} deriving (Show)
+
 main :: IO ()
 main = do
   let start = (0,0)
@@ -12,44 +18,47 @@ main = do
   clear
   move start
 
-  mainLoop start []
+  mainLoop DrawData { pos = start, ps = [], color = (37,40) }
 
-mainLoop :: Point -> [Point] -> IO ()
-mainLoop pos ps = do
+mainLoop :: DrawData -> IO ()
+mainLoop dd = do
   hSetEcho stdout False
   action <- getChar
-  (newPos, newPs) <- actionHandler [action] pos ps
+  dd' <- actionHandler [action] dd
 
-  let put'  = put newPos
-  let ps'   = zip newPs (replicate (length newPs) "█")
+  let putStrOnPoint'  = putStrOnPoint (pos dd')
+  let ps'   = zip (ps dd') (replicate (length (ps dd')) "█")
   clear
-  mapM_ put' ps'
+  mapM_ putStrOnPoint' ps'
 
-  mainLoop newPos newPs
+  mainLoop dd'
 
 up    = ["k", "\ESC[A"]
 down  = ["j", "\ESC[B"]
 left  = ["h", "\ESC[D"]
 right = ["l", "\ESC[C"]
 
-actionHandler :: String -> Point -> [Point] -> IO (Point, [Point])
-actionHandler c pos ps
-  | c == "\n" = if pos `elem` ps
-                   then return (pos, delete pos ps)
-                   else return (pos, pos : ps)
+actionHandler :: String -> DrawData -> IO DrawData
+actionHandler c dd
+  | c == "\n" = if pos' `elem` ps'
+                   then return dd { ps = delete pos' ps' }
+                   else return dd { ps = pos' : ps' }
   | c == "c" = do
-    sequence_ (clear : [move pos])
-    return (pos, [])
+    sequence_ (clear : [move pos'])
+    return dd { ps = [] }
   | c `elem` up = do
-    p <- moveUp pos
-    return (p, ps)
+    p <- moveUp pos'
+    return dd { pos = p }
   | c `elem` down = do
-    p <- moveDown pos
-    return (p, ps)
+    p <- moveDown pos'
+    return dd { pos = p }
   | c `elem` left = do
-    p <- moveLeft pos
-    return (p, ps)
+    p <- moveLeft pos'
+    return dd { pos = p }
   | c `elem` right = do
-    p <- moveRight pos
-    return (p, ps)
-  | otherwise = return (pos, ps)
+    p <- moveRight pos'
+    return dd { pos = p }
+  | otherwise = return dd
+  where
+    pos'  = pos dd
+    ps'   = ps dd

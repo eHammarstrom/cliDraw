@@ -1,6 +1,7 @@
 module Helpers(
   Point,
-  put,
+  Color,
+  putStrOnPoint,
   move,
   moveUp,
   moveDown,
@@ -14,10 +15,11 @@ import Data.Char
 import Data.List
 -- import System.Console.Terminal.Size
 
-type Point = (Int, Int)
+type Point = (Int, Int) -- x  y
+type Color = (Int, Int) -- fg bg
 
-put :: Point -> (Point, String) -> IO ()
-put oldP (p, s) = do
+putStrOnPoint :: Point -> (Point, String) -> IO ()
+putStrOnPoint oldP (p, s) = do
   move p
   putStr s
   move oldP
