@@ -10,6 +10,7 @@ module Helpers
   , setColor
   , clear
   , getTermCenter
+  , getNextColor
   ) where
 
 import Data.Char
@@ -68,6 +69,18 @@ getTermCenter = do
     Just (Window h w) -> return (w `div` 2, h `div` 2)
     _ -> return (0, 0)
 
+getNextColor :: (Int, Color) -> IO (Int, Color)
+getNextColor (x, _)
+  | x == (length swatch) - 1 = do
+    setColor (swatch !! 0)
+    return (0, swatch !! 0)
+  | otherwise = do
+    setColor (swatch !! (x + 1))
+    return (x + 1, swatch !! (x + 1))
+
 {- private -}
 constructEscape :: [Int] -> String -> String
 constructEscape args code = "\ESC[" ++ intercalate ";" (map show args) ++ code
+
+swatch :: [Color]
+swatch = [(37, 40), (30, 47)]

@@ -8,6 +8,8 @@
 
 `c` to clear canvas.
 
+`s` to cycle through color palette.
+
 ## Examples
 
 ![image1 error](./cliDrawv1_1.png)

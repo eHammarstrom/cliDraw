@@ -8,17 +8,16 @@ import System.IO
 data DrawData = DrawData
   { pos :: Point
   , ps :: [Point]
-  , color :: Color
+  , color :: (Int, Color)
   } deriving (Show)
 
 main :: IO ()
 main = do
   startPos <- getTermCenter
-  let color = (37, 40)
-  setColor color
+  startColor <- getNextColor (0, (0, 0))
   clear
   move startPos
-  mainLoop DrawData {pos = startPos, ps = [], color = color}
+  mainLoop DrawData {pos = startPos, ps = [], color = startColor}
 
 mainLoop :: DrawData -> IO ()
 mainLoop dd = do
@@ -50,6 +49,7 @@ actionHandler c dd
   | c `elem` down = moveDown pos' >>= \p -> return dd {pos = p}
   | c `elem` left = moveLeft pos' >>= \p -> return dd {pos = p}
   | c `elem` right = moveRight pos' >>= \p -> return dd {pos = p}
+  | c == "s" = getNextColor (color dd) >>= \color' -> return dd {color = color'}
   | otherwise = return dd
   where
     pos' = pos dd
